@@ -7,8 +7,8 @@
 import class Foundation.DateFormatter
 
 public extension SwiftPrint {
+    
     final class Setup {
-        private init() {}
         
         internal static let timestampDateFormatter: DateFormatter = {
             let formatter = DateFormatter()
@@ -16,7 +16,12 @@ public extension SwiftPrint {
             return formatter
         }()
         
+        public static var logLevel: LogLevel = .all
         public static var isEnabled = true
         public static var printNilMessages: Bool = false
+        
+        // MARK: - Private
+        
+        private init() {}
     }
 }

@@ -12,16 +12,25 @@ public enum SwiftPrint {
     
     public static func generateOutput(message messageOrNil: Any?,
                                         object: AnyObject?,
+                                        logType: LogType,
                                         filePath: String,
                                         lineOfCode: UInt) -> String? {
-        guard messageOrNil != nil || (messageOrNil == nil && Setup.printNilMessages) else
+        guard canPrint(logType),
+              messageOrNil != nil || (messageOrNil == nil && Setup.printNilMessages) else
         {
             return nil
         }
         
+        let prefix: String
+        if let icon = logType.prefix {
+            prefix = "\(icon) "
+        } else {
+            prefix = ""
+        }
+        
         let message = messageOrNil != nil ? "\(messageOrNil!)" : "nil"
         
-        return "\(currentDateAsString) | \(fileNameFromPath(filePath)):\(lineOfCodeString(lineOfCode)) | \(message)"
+        return "\(currentDateAsString) | \(fileNameFromPath(filePath)):\(lineOfCodeString(lineOfCode)) | \(prefix)\(message)"
     }
     
     // MARK: - Internal
@@ -39,5 +48,21 @@ public enum SwiftPrint {
     
     internal static var currentDateAsString: String {
         Setup.timestampDateFormatter.string(from: Date())
+    }
+    
+    internal static func canPrint(_ logType: LogType) -> Bool {
+        guard Setup.isEnabled else {
+            return false
+        }
+        switch Setup.logLevel {
+        case .all:
+            return true
+        case .none:
+            return false
+        case .errorsAndUnexpected:
+            return logType == .error || logType == .unexpected
+        case .unexpectedOnly:
+            return logType == .unexpected
+        }
     }
 }
