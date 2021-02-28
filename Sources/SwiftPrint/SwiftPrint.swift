@@ -21,6 +21,13 @@ public enum SwiftPrint {
             return nil
         }
         
+        let iconString: String
+        if let string = icon(forAddress: address(of: object)) {
+            iconString = "\(string) "
+        } else {
+            iconString = ""
+        }
+        
         let prefix: String
         if let icon = logType.prefix {
             prefix = "\(icon) "
@@ -30,10 +37,29 @@ public enum SwiftPrint {
         
         let message = messageOrNil != nil ? "\(messageOrNil!)" : "nil"
         
-        return "\(currentDateAsString) | \(fileNameFromPath(filePath)):\(lineOfCodeString(lineOfCode)) | \(prefix)\(message)"
+        return "\(currentDateAsString) | \(fileNameFromPath(filePath)):\(lineOfCodeString(lineOfCode)) \(iconString)| \(prefix)\(message)"
     }
     
     // MARK: - Internal
+    
+    internal static var addressIcons = AddressIcons()
+    internal static var weakArray: [WeakReference] = []
+    
+    internal static func address(of object: AnyObject?) -> String? {
+        if object != nil {
+            let reference = WeakReference(object: object)
+            weakArray.append(reference)
+            return reference.string
+        }
+        return nil
+    }
+    
+    internal static func icon(forAddress addressString: String?) -> String? {
+        if let addressString = addressString {
+            return addressIcons.icon(for: addressString)
+        }
+        return nil
+    }
     
     // Prefixes number of lines of code with 2 spaces for numbers 0-10 and with 1 space for numbers 10-99
     internal static func lineOfCodeString(_ lineOfCode: UInt) -> String {
