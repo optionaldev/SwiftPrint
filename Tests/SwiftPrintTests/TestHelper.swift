@@ -20,11 +20,13 @@ final class TestHelper {
     static func generateOutput(message: Any?,
                                object: AnyObject? = nil,
                                logType: SwiftPrint.LogType) -> String? {
-        return SwiftPrint.generateOutput(message: message,
-                                         object: object,
+        return SwiftPrint.generateOutput(rawMessageOrInstance: message,
+                                         objectForPrintingAddress: object,
                                          logType: logType,
                                          filePath: "Very/Long/Path/to/the-destionation/_AppDelegate.swift",
-                                         lineOfCode: 0)
+                                         lineOfCode: 0,
+                                         includeTimestamp: false,
+                                         shouldPersist: false)
     }
     
     static func generateRandomOutput(forLogType logType: SwiftPrint.LogType) -> String? {

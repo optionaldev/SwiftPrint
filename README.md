@@ -9,15 +9,28 @@ func log(_ message: Any?,
            object: AnyObject? = nil,
            type: SwiftPrint.LogType = .error,
            filePath: String = #file,
-           lineOfCode: UInt = #line)
+           lineOfCode: UInt = #line,
+           timestamp: Bool = true,
+           persist: Bool = true)
 {
-    if let output = SwiftPrint.generateOutput(message: message,
-                                              object: object,
+    #if DEBUG
+    if let output = SwiftPrint.generateOutput(rawMessageOrInstance: message,
+                                              objectForPrintingAddress: object,
                                               logType: type,
                                               filePath: filePath,
-                                              lineOfCode: lineOfCode)
+                                              lineOfCode: lineOfCode,
+                                              includeTimestamp: timestamp,
+                                              shouldPersist: persist)
     {
         Swift.print(output)
     }
+    #endif
 }
+```
+
+Don't forget to use  **Swift Compiler - Custom Flags** section from **Build Settings** to define debug flags to ensure that the printing is only happening in the debug versions of your app, especially if you're using the persitence feature. 
+```
+#if DEBUG
+...
+#endif
 ```

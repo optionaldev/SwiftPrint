@@ -10,19 +10,22 @@ public enum SwiftPrint {
     
     // MARK: - Public
     
-    public static func generateOutput(message messageOrNil: Any?,
-                                        object: AnyObject?,
-                                        logType: LogType,
-                                        filePath: String,
-                                        lineOfCode: UInt) -> String? {
+    public static func generateOutput(rawMessageOrInstance: Any?,
+                                      objectForPrintingAddress: AnyObject?,
+                                      logType: LogType,
+                                      filePath: String,
+                                      lineOfCode: UInt,
+                                      includeTimestamp: Bool,
+                                      shouldPersist: Bool) -> String?
+    {
         guard canPrint(logType),
-              messageOrNil != nil || (messageOrNil == nil && Setup.printNilMessages) else
+              rawMessageOrInstance != nil || (rawMessageOrInstance == nil && Setup.printNilMessages) else
         {
             return nil
         }
         
         let iconString: String
-        if let string = icon(forAddress: address(of: object)) {
+        if let string = icon(forAddress: address(of: objectForPrintingAddress)) {
             iconString = "\(string) "
         } else {
             iconString = ""
@@ -35,9 +38,17 @@ public enum SwiftPrint {
             prefix = ""
         }
         
-        let message = messageOrNil != nil ? "\(messageOrNil!)" : "nil"
+        let rawMessage = rawMessageOrInstance != nil ? "\(rawMessageOrInstance!)" : "nil"
         
-        return "\(currentDateAsString) | \(fileNameFromPath(filePath)):\(lineOfCodeString(lineOfCode)) \(iconString)| \(prefix)\(message)"
+        let beautifiedMessage = "\(fileNameFromPath(filePath)):\(lineOfCodeString(lineOfCode)) \(iconString)| \(prefix)\(rawMessage)"
+        
+        let timestampedMessage = includeTimestamp ? "\(currentDateAsString) | \(beautifiedMessage)" : beautifiedMessage
+        
+        if shouldPersist {
+            DebugLogger.shared.log(timestampedMessage)
+        }
+        
+        return beautifiedMessage
     }
     
     // MARK: - Internal
