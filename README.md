@@ -28,7 +28,7 @@ func log(_ message: Any?,
 }
 ```
 
-Don't forget to use  **Swift Compiler - Custom Flags** section from **Build Settings** to define debug flags to ensure that the printing is only happening in the debug versions of your app, especially if you're using the persitence feature. 
+Don't forget to use  **Swift Compiler - Custom Flags** section from **Build Settings** to define debug flags to ensure that the printing is only happening in the debug versions of your app, especially if you're using the persistence feature. 
 ```
 #if DEBUG
 ...
